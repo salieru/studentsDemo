@@ -7,12 +7,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "GROUPZ")
-public class Group implements Serializable {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "group_id", nullable = false)
-    private Long id;
+public class Group extends Base implements Serializable {
 
     @Column(name = "group_number")
     private Integer groupNumber;
@@ -39,10 +34,6 @@ public class Group implements Serializable {
         this.students = students;
     }
 
-    public Long getId() {
-        return id;
-    }
-
     public Integer getGroupNumber() {
         return groupNumber;
     }
@@ -66,13 +57,8 @@ public class Group implements Serializable {
 
         Group group = (Group) o;
 
-        if (!id.equals(group.id)) return false;
+        if (!getId().equals(group.getId())) return false;
         if (!groupNumber.equals(group.groupNumber)) return false;
         return facultyName.equals(group.facultyName);
-    }
-
-    @Override
-    public int hashCode() {
-        return id.hashCode();
     }
 }

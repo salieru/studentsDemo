@@ -1,18 +1,11 @@
 package application.entity;
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.util.Date;
 
 @Entity
-//@NamedQuery(name = "Student.findByFilters", query = "SELECT s FROM Student s WHERE s.lastname = '' and s.group.groupNumber")
 @Table(name = "STUDENTS")
-public class Student implements Serializable {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "student_id", nullable = false)
-    private Long id;
+public class Student extends Base {
 
     @Column(name = "first_name")
     private String firstName;
@@ -27,7 +20,7 @@ public class Student implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date birthDate;
 
-    @JoinColumn(name = "group_id", referencedColumnName = "group_id")
+    @JoinColumn(name = "group_id", referencedColumnName = "id")
     @ManyToOne
     private Group group;
 
@@ -47,10 +40,6 @@ public class Student implements Serializable {
 
     public void setGroup(Group group) {
         this.group = group;
-    }
-
-    public Long getId() {
-        return id;
     }
 
     public String getFirstName() {
