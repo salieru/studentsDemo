@@ -6,6 +6,9 @@ import application.entity.Group;
 import application.entity.Student;
 import application.repository.GroupRepository;
 import application.repository.StudentRepository;
+import application.util.GroupGridBuilder;
+import application.util.StudentGridBuilder;
+import application.util.StudentSearcher;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.grid.Grid;
@@ -17,11 +20,7 @@ import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.Route;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.StringUtils;
 
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 
@@ -36,8 +35,8 @@ public class MainView extends VerticalLayout {
 	private final StudentEditor studentEditor;
 	private final GroupEditor groupEditor;
 
-	private final Grid<Student> studentGrid = new Grid<>(Student.class);
-	private final Grid<Group> groupGrid = new Grid<>(Group.class);
+	private Grid<Student> studentGrid;
+	private Grid<Group> groupGrid;
 
 	private final TextField filterByLastName = new TextField();
 	private final ComboBox<Group> filterByGroupNumber = new ComboBox<>();
@@ -52,6 +51,10 @@ public class MainView extends VerticalLayout {
 		this.studentEditor = studentEditor;
 		this.groupEditor = groupEditor;
 
+        initMainView();
+    }
+
+    private void initMainView() {
         setFilters();
         initGrids();
         initButtons();
@@ -131,44 +134,14 @@ public class MainView extends VerticalLayout {
     }
 
     private void initGrids() {
-        studentGrid.setHeight("300px");
-        studentGrid.setColumns("id", "firstName", "lastName", "middleName");
-        studentGrid.addColumn((Student student) -> {
-            LocalDate localDate = convertToLocalDate(student.getBirthDate());
-            return localDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-        });
-        studentGrid.addColumn("group.groupNumber");
-        studentGrid.getColumnByKey("id").setWidth("50px").setFlexGrow(0);
-
-        groupGrid.setHeight("300px");
-        groupGrid.setColumns("id", "groupNumber", "facultyName");
-        groupGrid.getColumnByKey("id").setWidth("50px").setFlexGrow(0);
-
+	    studentGrid = StudentGridBuilder.buildGrid();
+	    groupGrid = GroupGridBuilder.buildGrid();
         studentGrid.asSingleSelect().addValueChangeListener(e -> studentEditor.edit(e.getValue()));
-
         groupGrid.asSingleSelect().addValueChangeListener(e -> groupEditor.edit(e.getValue()));
     }
 
-    private LocalDate convertToLocalDate(Date dateToConvert) {
-        return dateToConvert.toInstant()
-                .atZone(ZoneId.systemDefault())
-                .toLocalDate();
-    }
-
 	private void listStudents(String lastName, Integer groupNumber) {
-		if (StringUtils.isEmpty(lastName)&&groupNumber==null) {
-            studentGrid.setItems(studentRepository.findAll());
-            return;
-		}
-		if (!StringUtils.isEmpty(lastName)&&groupNumber==null){
-			studentGrid.setItems(studentRepository.findByLastNameStartsWithIgnoreCase(lastName));
-			return;
-		}
-		if (StringUtils.isEmpty(lastName)&&groupNumber!=null){
-            studentGrid.setItems(studentRepository.findByGroupNumber(groupNumber));
-		    return;
-        }
-        studentGrid.setItems(studentRepository.findByFilters(lastName, groupNumber));
+        studentGrid.setItems(StudentSearcher.listStudents(studentRepository, lastName, groupNumber));
 	}
 
     private void listGroups() {

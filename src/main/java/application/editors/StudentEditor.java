@@ -36,7 +36,7 @@ public class StudentEditor extends AbstractEditor {
 		this.groupRepository = groupRepository;
 
         add(firstName, lastName, middleName, birthDate, groupSelector);
-        setDialogDimensions("350px", "540px");
+        setDialogDimensions("320px", "540px");
         bindFields();
 	}
 
