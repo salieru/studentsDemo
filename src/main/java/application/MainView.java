@@ -149,5 +149,4 @@ public class MainView extends VerticalLayout {
         filterByGroupNumber.setItems(allGroups);
         groupGrid.setItems(allGroups);
     }
-
 }
