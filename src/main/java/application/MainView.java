@@ -1,5 +1,7 @@
 package application;
 
+import application.editors.GroupEditor;
+import application.editors.StudentEditor;
 import application.entity.Group;
 import application.entity.Student;
 import application.repository.GroupRepository;
@@ -118,9 +120,9 @@ public class MainView extends VerticalLayout {
         addNewBtn.addClickListener(e -> {
             List<Group> groups = groupRepository.findAll();
             Student newStudent = new Student("", "", "", new Date(), groups.get(0));
-            studentEditor.editStudent(newStudent);
+            studentEditor.edit(newStudent);
         });
-        addNewGrp.addClickListener(e -> groupEditor.editGroup(new Group(0,"")));
+        addNewGrp.addClickListener(e -> groupEditor.edit(new Group(0,"")));
     }
 
     private void clear() {
@@ -142,13 +144,9 @@ public class MainView extends VerticalLayout {
         groupGrid.setColumns("id", "groupNumber", "facultyName");
         groupGrid.getColumnByKey("id").setWidth("50px").setFlexGrow(0);
 
-        studentGrid.asSingleSelect().addValueChangeListener(e -> {
-            studentEditor.editStudent(e.getValue());
-        });
+        studentGrid.asSingleSelect().addValueChangeListener(e -> studentEditor.edit(e.getValue()));
 
-        groupGrid.asSingleSelect().addValueChangeListener(e -> {
-            groupEditor.editGroup(e.getValue());
-        });
+        groupGrid.asSingleSelect().addValueChangeListener(e -> groupEditor.edit(e.getValue()));
     }
 
     private LocalDate convertToLocalDate(Date dateToConvert) {
