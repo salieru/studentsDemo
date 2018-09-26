@@ -20,6 +20,9 @@ public class GroupEditor extends AbstractEditor {
 
     private TextField groupNumber = new TextField("Group number");
     private TextField facultyName = new TextField("Faculty name");
+    private Label errorLabel = new Label();
+    private String errorDeletionText = "cannot delete group with students";
+    private String errorCreatingText = "cannot create group without number";
 
     private Binder<Group> binder = new Binder<>(Group.class);
 
@@ -51,19 +54,28 @@ public class GroupEditor extends AbstractEditor {
 
     @Override
     protected void addClickListenersToButtons(Dialog dialog, Button dialogSave, Button dialogCancel, Button dialogDelete) {
+        dialog.add(errorLabel);
         dialogSave.addClickListener(listener -> {
-            save();
+            if (groupNumber.getValue()==null){
+                errorLabel.setText(errorCreatingText);
+            } else {
+                errorLabel.setText("");
+                save();
+                dialog.close();
+            }
+        });
+        dialogCancel.addClickListener(listener -> {
+            errorLabel.setText("");
             dialog.close();
         });
-        dialogCancel.addClickListener(listener -> dialog.close());
         dialogDelete.addClickListener(listener -> {
             try {
                 delete();
+                errorLabel.setText("");
                 dialog.close();
             } catch (DataIntegrityViolationException e){
-                dialog.add(new Label("cannot delete group with students"));
+                errorLabel.setText(errorDeletionText);
             }
-
         });
     }
 }
