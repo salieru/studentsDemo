@@ -13,6 +13,7 @@ import com.vaadin.flow.spring.annotation.SpringComponent;
 import com.vaadin.flow.spring.annotation.UIScope;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.util.StringUtils;
 
 @SpringComponent
 @UIScope
@@ -56,7 +57,7 @@ public class GroupEditor extends AbstractEditor {
     protected void addClickListenersToButtons(Dialog dialog, Button dialogSave, Button dialogCancel, Button dialogDelete) {
         dialog.add(errorLabel);
         dialogSave.addClickListener(listener -> {
-            if (groupNumber.getValue()==null){
+            if (groupNumber.getValue()==null || StringUtils.isEmpty(groupNumber.getValue())){
                 errorLabel.setText(errorCreatingText);
             } else {
                 errorLabel.setText("");
